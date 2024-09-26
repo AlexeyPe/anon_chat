@@ -1,11 +1,13 @@
 <script lang="ts">
 	import CornerBottomRight from "svelte-radix/CornerBottomRight.svelte";
+	import Reset from "svelte-radix/Reset.svelte";
 
 	import { Textarea } from "$lib/components/ui/textarea";
 	import { Label } from "$lib/components/ui/label";
 	import { Button } from "$lib/components/ui/button/index.js";
 	import { ScrollArea } from "$lib/components/ui/scroll-area/index.js";
   	import Message from "./Message.svelte";
+	import * as Tooltip from "$lib/components/ui/tooltip/index.js";
 
 	let maxLength:number = 60
 	let currentLength:number = 0
@@ -34,6 +36,27 @@
 				<Message/>
 				<Message/>
 			</ScrollArea>
+		</div>
+		<div class="mx-1 pb-0.5 text-sm flex justify-between">
+			
+			<Tooltip.Root openDelay={150}>
+				<Tooltip.Trigger>
+					<span>Вы - золотая панда</span>
+				</Tooltip.Trigger>
+				<Tooltip.Content>
+				  <p class="text-sm">Ваш случайно созданый псевдоним</p>
+				</Tooltip.Content>
+			</Tooltip.Root>
+			<Tooltip.Root openDelay={150}>
+				<Tooltip.Trigger asChild let:builder>
+					<Button builders={[builder]} variant="ghost" class="size-5 m-0 p-0.5">
+						<Reset size={15}/>
+					</Button>
+				</Tooltip.Trigger>
+				<Tooltip.Content>
+				  <p class="text-sm">Удалить все сообщения(Все)</p>
+				</Tooltip.Content>
+			</Tooltip.Root>
 		</div>
 		<form class="bg-background focus-within:ring-ring rounded-lg border focus-within:ring-1">
 			<Label for="message" class="sr-only">сообщение</Label>
