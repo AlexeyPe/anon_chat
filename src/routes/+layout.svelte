@@ -3,11 +3,11 @@
     import Header from "./Header.svelte";
     import { ModeWatcher } from "mode-watcher";
 </script>
-<div>
+<div class="max-w-72 flex flex-col justify-center m-auto p-3">
     <ModeWatcher disableTransitions={false}/>
     <Header/>
 
-    <main>
+    <main class="flex ">
         <slot></slot>
     </main>
 
