@@ -3,7 +3,7 @@
     import { PUBLIC_LINK_GITHUB } from '$env/static/public';
     import GitHubIcon from "svelte-radix/GithubLogo.svelte";
 </script>
-<header class="w-full">
+<header class="h-fit flex flex-col w-full">
     <div class="flex justify-between align-bottom">
         <span class="text-2xl font-medium flex flex-col justify-center">Anon chat</span>
         <DarkLightToggle/>
