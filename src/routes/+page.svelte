@@ -1,4 +1,6 @@
 <script lang="ts">
+	export let data;
+
 	import CornerBottomRight from "svelte-radix/CornerBottomRight.svelte";
 	import Reset from "svelte-radix/Reset.svelte";
 
@@ -9,7 +11,7 @@
   	import Message from "./Message.svelte";
 	import * as Tooltip from "$lib/components/ui/tooltip/index.js";
 
-	let maxLength:number = 60
+	let maxLength:number = 50
 	let currentLength:number = 0
 	let currentMessage:string
 	let textError:string = ""
@@ -28,23 +30,16 @@
 	<div class="absolute h-full w-full flex flex-col">
 		<div class="relative h-full flex flex-col my-5">
 			<ScrollArea class="absolute bottom-0 max-h-full w-full flex flex-col">
-				<Message/>
-				<Message/>
-				<Message/>
-				<Message/>
-				<Message/>
-				<Message/>
-				<Message/>
 			</ScrollArea>
 		</div>
 		<div class="mx-1 pb-0.5 text-sm flex justify-between">
 			
 			<Tooltip.Root openDelay={150}>
 				<Tooltip.Trigger>
-					<span>Вы - золотая панда</span>
+					<span>Вы - {data.userName}</span>
 				</Tooltip.Trigger>
 				<Tooltip.Content>
-				  <p class="text-sm">Ваш случайно созданый псевдоним</p>
+				  <p class="text-sm">Ваш случайно созданный псевдоним</p>
 				</Tooltip.Content>
 			</Tooltip.Root>
 			<Tooltip.Root openDelay={150}>
@@ -58,7 +53,7 @@
 				</Tooltip.Content>
 			</Tooltip.Root>
 		</div>
-		<form class="bg-background focus-within:ring-ring rounded-lg border focus-within:ring-1">
+		<form method="POST" class="bg-background focus-within:ring-ring rounded-lg border focus-within:ring-1">
 			<Label for="message" class="sr-only">сообщение</Label>
 			<Textarea
 				required
@@ -67,7 +62,7 @@
 				bind:value={currentMessage}
 				on:input={textAreaKeyup}
 				maxlength={maxLength}
-				class="min-h-12 resize-none border-0 p-3 shadow-none focus-visible:ring-0"
+				class="min-h-[75px] resize-none border-0 p-2 pt-1.5 shadow-none focus-visible:ring-0"
 			/>
 	
 			<div class="flex justify-between p-3 pt-0">
