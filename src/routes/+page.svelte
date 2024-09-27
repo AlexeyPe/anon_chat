@@ -31,7 +31,12 @@
 		<div class="relative h-full flex flex-col my-5">
 			<ScrollArea class="absolute bottom-0 max-h-full w-full flex flex-col">
 				{#each data.messages as msg}
-					<Message/>
+					<Message
+						author={msg.userName}
+						message={msg.message}
+						date={new Date(msg.dateUTC)}
+						right={data.id == msg.id}
+					/>
 				{/each}
 			</ScrollArea>
 		</div>

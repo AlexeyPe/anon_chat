@@ -20,10 +20,8 @@ export function getMessages():Array<any> {
 	}
 	// console.log("getMessages() messages:",messages)
 	const res = db.get("messages").map((item:any) => {
-		let new_item = structuredClone(item)
-		new_item.userName = getUserName(item.id)
-		delete new_item.id
-		return new_item
+		item.userName = getUserName(item.id)
+		return item
 	})
 	// console.log("getMessages() res:",res)
 	return res
