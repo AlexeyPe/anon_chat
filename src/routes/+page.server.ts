@@ -1,3 +1,5 @@
+import * as db from '$lib/server/database.js';
+
 export function load({ cookies }) {
 	let id = cookies.get('userid');
 
@@ -5,19 +7,17 @@ export function load({ cookies }) {
 		id = String(new Date().getTime());
 		cookies.set('userid', id, { path: '/' });
 	}
-	const userName:string = getUserName(Number(id))
 
 	return {
-		userName,
-		id
+		userName: db.getUserName(Number(id)),
+		id,
+		messages: db.getMessages(),
 	};
 }
 
-const x = ['красная', 'синяя', 'зелёная', 'белая', 'чёрная', 'оранжевая', 'золотая', 'голубая']
-const y = ['черепаха', 'обезьяна', 'собака', 'акула', 'рыба', 'панда', 'лама', 'змея']
-function getUserNameWord(id:number, arr:Array<string>):string {
-	return id == 0 ? arr[0] : arr[id%arr.length]
-}
-function getUserName(id:number):string {
-	return `${getUserNameWord(id, x)} ${getUserNameWord(id, y)}`
-}
+export const actions = {
+	default: async ({ cookies, request }) => {
+		const data = await request.formData();
+		db.createMessage(Number(cookies.get('userid')), data.get('message'));
+	}
+};

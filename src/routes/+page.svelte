@@ -30,6 +30,9 @@
 	<div class="absolute h-full w-full flex flex-col">
 		<div class="relative h-full flex flex-col my-5">
 			<ScrollArea class="absolute bottom-0 max-h-full w-full flex flex-col">
+				{#each data.messages as msg}
+					<Message/>
+				{/each}
 			</ScrollArea>
 		</div>
 		<div class="mx-1 pb-0.5 text-sm flex justify-between">
@@ -57,6 +60,7 @@
 			<Label for="message" class="sr-only">сообщение</Label>
 			<Textarea
 				required
+				name="message"
 				id="message"
 				placeholder="Введите ваше сообщение здесь"
 				bind:value={currentMessage}
