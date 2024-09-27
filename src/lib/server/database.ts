@@ -13,14 +13,17 @@ export function getUserName(id:number):string {
 }
 
 export function getMessages():Array<any> {
-	const messages = db.get("messages")
+	let messages = db.get("messages")
 	if (messages == undefined) {
+		messages = []
 		db.set("messages", [])
 	}
+	// console.log("getMessages() messages:",messages)
 	const res = db.get("messages").map((item:any) => {
-		item["userName"] = getUserName(item.id)
-		delete item.id 
-		return item
+		let new_item = structuredClone(item)
+		new_item.userName = getUserName(item.id)
+		delete new_item.id
+		return new_item
 	})
 	// console.log("getMessages() res:",res)
 	return res
