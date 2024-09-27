@@ -52,16 +52,18 @@
 			</Tooltip.Root>
 			<Tooltip.Root openDelay={150}>
 				<Tooltip.Trigger asChild let:builder>
-					<Button builders={[builder]} variant="ghost" class="size-5 m-0 p-0.5">
-						<Reset size={15}/>
-					</Button>
+					<form method="POST" action="?/deleteAll">
+						<Button type="submit" builders={[builder]} variant="ghost" class="size-5 m-0 p-0.5">
+							<Reset size={15}/>
+						</Button>
+					</form>
 				</Tooltip.Trigger>
 				<Tooltip.Content>
 				  <p class="text-sm">Удалить все сообщения(Все)</p>
 				</Tooltip.Content>
 			</Tooltip.Root>
 		</div>
-		<form method="POST" class="bg-background focus-within:ring-ring rounded-lg border focus-within:ring-1">
+		<form method="POST" action="?/create" class="bg-background focus-within:ring-ring rounded-lg border focus-within:ring-1">
 			<Label for="message" class="sr-only">сообщение</Label>
 			<Textarea
 				required

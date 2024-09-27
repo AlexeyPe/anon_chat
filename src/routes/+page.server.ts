@@ -1,11 +1,11 @@
 import * as db from '$lib/server/database.js';
 
 export function load({ cookies }) {
-	let id = cookies.get('userid');
+	let id = cookies.get('userid')
 
 	if (!id) {
 		id = String(new Date().getTime());
-		cookies.set('userid', id, { path: '/' });
+		cookies.set('userid', id, { path: '/' })
 	}
 
 	return {
@@ -16,8 +16,11 @@ export function load({ cookies }) {
 }
 
 export const actions = {
-	default: async ({ cookies, request }) => {
-		const data = await request.formData();
-		db.createMessage(Number(cookies.get('userid')), data.get('message'));
-	}
+	create: async ({ cookies, request }) => {
+		const data = await request.formData()
+		db.createMessage(Number(cookies.get('userid')), data.get('message'))
+	},
+	deleteAll: async () => {
+		db.delteAllMessages()
+	},
 };

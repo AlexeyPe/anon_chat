@@ -28,11 +28,15 @@ export function getMessages():Array<any> {
 }
 
 export function createMessage(userId:number, message:any) {
-	const messages = db.get("messages");
+	const messages = db.get("messages")
 
 	messages.push({
 		id: userId,
 		message: message,
 		dateUTC: new Date().getTime()
 	});
+}
+
+export function delteAllMessages() {
+	db.set("messages", [])
 }
