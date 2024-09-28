@@ -3,6 +3,7 @@
 
 	import CornerBottomRight from "svelte-radix/CornerBottomRight.svelte";
 	import Reset from "svelte-radix/Reset.svelte";
+	import Reload from "svelte-radix/Reload.svelte";
 
 	import { Textarea } from "$lib/components/ui/textarea";
 	import { Label } from "$lib/components/ui/label";
@@ -12,6 +13,7 @@
 	import * as Tooltip from "$lib/components/ui/tooltip/index.js";
 
 	import { browser } from "$app/environment";
+	import { enhance } from '$app/forms';
 
 	$: ({messages} = data)
 
@@ -19,6 +21,7 @@
 	let currentLength:number = 0
 	let currentMessage:string
 	let textError:string = ""
+	let messageCreating = false;
 	const textAreaKeyup = () => {
 		currentLength = currentMessage.length
 		textError = currentLength == maxLength ? "text-error" : ""
@@ -75,8 +78,12 @@
 			</Tooltip.Root>
 			<Tooltip.Root openDelay={150}>
 				<Tooltip.Trigger asChild let:builder>
-					<form method="POST" action="?/deleteAll">
-						<Button type="submit" builders={[builder]} variant="ghost" class="size-5 m-0 p-0.5">
+					<form 
+						method="POST"
+						action="?/deleteAll"
+						use:enhance
+					>
+						<Button  type="submit" builders={[builder]} variant="ghost" class="size-5 m-0 p-0.5">
 							<Reset size={15}/>
 						</Button>
 					</form>
@@ -86,7 +93,19 @@
 				</Tooltip.Content>
 			</Tooltip.Root>
 		</div>
-		<form method="POST" action="?/create" class="bg-background focus-within:ring-ring rounded-lg border focus-within:ring-1">
+		<form 
+			method="POST"
+			action="?/create"
+			class="bg-background focus-within:ring-ring rounded-lg border focus-within:ring-1"
+			use:enhance={() => {
+				messageCreating = true;
+		
+				return async ({ update }) => {
+					await update();
+					messageCreating = false;
+				};
+			}}
+		>
 			<Label for="message" class="sr-only">сообщение</Label>
 			<Textarea
 				required
@@ -101,9 +120,14 @@
 	
 			<div class="flex justify-between p-3 pt-0">
 				<span class="text-sm self-center {textError}">{currentLength}/{maxLength}</span>
-				<Button type="submit" size="sm" class="gap-1">
-					Отправить
-					<CornerBottomRight class="size-4"/>
+				<Button type="submit" disabled={messageCreating} size="sm" class="gap-1">
+					{#if messageCreating}
+						Подождите
+						<Reload class="size-4 animate-spin" />
+					{:else}
+						Отправить
+						<CornerBottomRight class="size-4"/>
+					{/if}
 				</Button>
 			</div>
 		</form>
