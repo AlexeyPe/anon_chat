@@ -43,14 +43,23 @@
 <div class="h-full relative pb-4">
 	<div class="absolute h-full w-full flex flex-col">
 		<div class="relative h-full flex flex-col my-5">
-			<ScrollArea class="absolute bottom-0 max-h-full w-full flex flex-col">
-				{#each messages as msg}
-					<Message
-						author={msg.userName}
-						message={msg.message}
-						date={new Date(msg.dateUTC)}
-						right={data.id == msg.id}
-					/>
+			<ScrollArea class="absolute bottom-0 flex p-3 flex-col max-h-full w-full ">
+				{#each messages as msg, i}
+					{#if i != 0 && messages[i-1].id == messages[i].id}
+						<Message
+							author={""}
+							message={msg.message}
+							date={new Date(msg.dateUTC)}
+							right={data.id == msg.id}
+						/>
+					{:else}
+						<Message
+							author={msg.userName}
+							message={msg.message}
+							date={new Date(msg.dateUTC)}
+							right={data.id == msg.id}
+						/>
+					{/if}
 				{/each}
 			</ScrollArea>
 		</div>
