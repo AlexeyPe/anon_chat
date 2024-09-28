@@ -11,6 +11,10 @@
   	import Message from "./Message.svelte";
 	import * as Tooltip from "$lib/components/ui/tooltip/index.js";
 
+	import { browser } from "$app/environment";
+
+	$: ({messages} = data)
+
 	let maxLength:number = 50
 	let currentLength:number = 0
 	let currentMessage:string
@@ -18,6 +22,16 @@
 	const textAreaKeyup = () => {
 		currentLength = currentMessage.length
 		textError = currentLength == maxLength ? "text-error" : ""
+	}
+
+	if (browser) {
+		setInterval(async () => {
+			await fetch('/messages').then((res) => {
+				res.json().then((res) => {
+					messages = res
+				})
+			}) 
+		}, 500)
 	}
 </script>
 
@@ -30,7 +44,7 @@
 	<div class="absolute h-full w-full flex flex-col">
 		<div class="relative h-full flex flex-col my-5">
 			<ScrollArea class="absolute bottom-0 max-h-full w-full flex flex-col">
-				{#each data.messages as msg}
+				{#each messages as msg}
 					<Message
 						author={msg.userName}
 						message={msg.message}
