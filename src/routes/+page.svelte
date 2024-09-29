@@ -16,17 +16,18 @@
 	import { enhance } from '$app/forms';
 
 	$: ({messages} = data)
-
+	
 	let maxLength:number = 50
 	let currentLength:number = 0
 	let currentMessage:string
 	let textError:string = ""
 	let messageCreating = false;
+	let scrollArea:Element
 	const textAreaKeyup = () => {
 		currentLength = currentMessage.length
 		textError = currentLength == maxLength ? "text-error" : ""
 	}
-
+	
 	if (browser) {
 		setInterval(async () => {
 			await fetch('/messages').then((res) => {
@@ -36,6 +37,10 @@
 			}) 
 		}, 500)
 	}
+	const scrollDown = (element:Element) => {
+		element.scrollTop = element.scrollHeight;
+	}
+
 </script>
 
 <svelte:head>
@@ -46,7 +51,7 @@
 <div class="h-full relative pb-4">
 	<div class="absolute h-full w-full flex flex-col">
 		<div class="relative h-full flex flex-col my-5">
-			<ScrollArea class="absolute bottom-0 flex p-3 flex-col max-h-full w-full ">
+			<div bind:this={scrollArea} class="absolute bottom-0 overflow-y-auto flex p-3 flex-col max-h-full w-full ">
 				{#each messages as msg, i}
 					{#if i != 0 && messages[i-1].id == messages[i].id}
 						<Message
@@ -64,7 +69,7 @@
 						/>
 					{/if}
 				{/each}
-			</ScrollArea>
+			</div>
 		</div>
 		<div class="mx-1 pb-0.5 text-sm flex justify-between">
 			
@@ -103,6 +108,7 @@
 				return async ({ update }) => {
 					await update();
 					messageCreating = false;
+					scrollDown(scrollArea)
 				};
 			}}
 		>
