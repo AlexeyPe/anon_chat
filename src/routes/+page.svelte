@@ -93,7 +93,7 @@
 				</Tooltip.Content>
 			</Tooltip.Root>
 		</div>
-		<form 
+		<form
 			method="POST"
 			action="?/create"
 			class="bg-background focus-within:ring-ring rounded-lg border focus-within:ring-1"
@@ -115,12 +115,19 @@
 				bind:value={currentMessage}
 				on:input={textAreaKeyup}
 				maxlength={maxLength}
+				on:keypress={(e)=>{
+					if ((e.key || e.code) == "Enter") {
+						e.preventDefault()
+						document.getElementById("btnFormSendMsg")?.click()
+						return false
+					}
+				}}
 				class="min-h-[75px] resize-none border-0 p-2 pt-1.5 shadow-none focus-visible:ring-0"
 			/>
 	
 			<div class="flex justify-between p-3 pt-0">
 				<span class="text-sm self-center {textError}">{currentLength}/{maxLength}</span>
-				<Button type="submit" disabled={messageCreating} size="sm" class="gap-1">
+				<Button id="btnFormSendMsg" type="submit" disabled={messageCreating} size="sm" class="gap-1">
 					{#if messageCreating}
 						Подождите
 						<Reload class="size-4 animate-spin" />
