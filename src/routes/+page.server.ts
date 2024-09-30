@@ -1,6 +1,4 @@
-import * as db from '$lib/server/database.js';
 import { PRIVATE_URL_API } from '$env/static/private';
-import { json } from 'stream/consumers';
 import type { PageServerLoad } from './$types.js';
 
 export const load: PageServerLoad = async ({ cookies }) => {
@@ -31,10 +29,19 @@ export const load: PageServerLoad = async ({ cookies }) => {
 export const actions = {
 	create: async ({ cookies, request }) => {
 		const data = await request.formData()
-		
-		// db.createMessage(Number(cookies.get('userid')), data.get('message'))
+		fetch(PRIVATE_URL_API + "createMessage/", {
+			method:"POST",
+			headers:{
+				'Accept': 'application/json',
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				id: Number(cookies.get('userid')),
+				message: data.get('message'),
+			}),
+		})
 	},
 	deleteAll: async () => {
-		db.delteAllMessages()
+		fetch(PRIVATE_URL_API + "delteAllMessages/", {method:"POST"})
 	},
 };
