@@ -27,20 +27,9 @@
 		currentLength = currentMessage.length
 		textError = currentLength == maxLength ? "text-error" : ""
 	}
-	
-	if (browser) {
-		setInterval(async () => {
-			await fetch('/messages').then((res) => {
-				res.json().then((res) => {
-					messages = res
-				})
-			}) 
-		}, 500)
-	}
 	const scrollDown = (element:Element) => {
 		element.scrollTop = element.scrollHeight;
 	}
-
 </script>
 
 <svelte:head>
