@@ -13,10 +13,18 @@
 	import * as Tooltip from "$lib/components/ui/tooltip/index.js";
 
 	import { browser } from "$app/environment";
+	import { onMount } from 'svelte';
 	import { enhance } from '$app/forms';
+	import { io } from "socket.io-client";
+	import { PUBLIC_URL_API_WEBSOCKET } from '$env/static/public';
+	const socket = io(PUBLIC_URL_API_WEBSOCKET, {
+            "reconnectionAttempts": Number.POSITIVE_INFINITY, //avoid having user reconnect manually in order to prevent dead clients after a server restart
+            "timeout" : 10000, //before connect_error and connect_timeout are emitted.
+            "transports" : ["websocket"]
+        });
 
 	$: ({messages} = data)
-	
+
 	let maxLength:number = 50
 	let currentLength:number = 0
 	let currentMessage:string
@@ -30,6 +38,11 @@
 	const scrollDown = (element:Element) => {
 		element.scrollTop = element.scrollHeight;
 	}
+	onMount(() => {
+		socket.on("updateMessages", new_messages => {
+			messages = [...new_messages]
+		})
+	})
 </script>
 
 <svelte:head>
