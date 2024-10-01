@@ -104,6 +104,7 @@
 			method="POST"
 			action="?/create"
 			class="bg-background focus-within:ring-ring rounded-lg border focus-within:ring-1"
+			on:submit={()=>{currentLength = 0}}
 			use:enhance={() => {
 				messageCreating = true;
 		
