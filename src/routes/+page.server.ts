@@ -1,5 +1,7 @@
 import { PRIVATE_URL_API } from '$env/static/private';
 import type { PageServerLoad } from './$types.js';
+import { supabase } from "$lib/supabaseClient";
+import { error } from 'console';
 
 export const load: PageServerLoad = async ({ cookies }) => {
 	let id = cookies.get('userid')
@@ -9,20 +11,31 @@ export const load: PageServerLoad = async ({ cookies }) => {
 		cookies.set('userid', id, { path: '/' })
 	}
 
-	let userName:string = ""
-	await fetch(PRIVATE_URL_API + "getUserName/" + id).then(async (res) => {
-		await res.json().then(res => {userName = res["userName"]})
-	})
+	interface Message {
+		created_at: string
+		id: number
+		message: string
+		user: {
+			userId: number
+			userName: string
+		}
+	}
 
-	let messages:Array<any> = []
-	await fetch(PRIVATE_URL_API + "getMessages/").then(async (res) => {
-		await res.json().then(res => {messages = res["messages"]})
-	})
+	let {data: users, error}= await supabase
+		.from('users')
+		.select('*')
+	
+	let { data: messages } = await supabase
+		.from('messages')
+		.select('id, created_at, message, user(userId, userName)')
+		.returns<Array<Message>>()
+		
+	console.log(messages)
 
 	return {
-		userName,
-		id,
-		messages,
+		userName:"",
+		id: Number(id),
+		messages:messages ?? [],
 	};
 }
 
