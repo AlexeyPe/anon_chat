@@ -1,5 +1,4 @@
 
-
 export type Database = {
   public: {
     Tables: {
@@ -35,15 +34,15 @@ export type Database = {
       users: {
         Row: {
           userId: number
-          userName: string | null
+          userName: string
         }
         Insert: {
           userId: number
-          userName?: string | null
+          userName?: string
         }
         Update: {
           userId?: number
-          userName?: string | null
+          userName?: string
         }
         Relationships: []
       }
@@ -52,8 +51,25 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      getUserName: {
+      add_message: {
+        Args: {
+          userid: number
+          message: string
+        }
+        Returns: undefined
+      }
+      delete_all_messages: {
         Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      delete_messages: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      getusername: {
+        Args: {
+          userid: number
+        }
         Returns: string
       }
     }

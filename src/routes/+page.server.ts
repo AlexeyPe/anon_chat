@@ -21,19 +21,18 @@ export const load: PageServerLoad = async ({ cookies }) => {
 		}
 	}
 
-	let {data: users, error}= await supabase
-		.from('users')
-		.select('*')
+	
+	let { data: userName } = await supabase.rpc('getusername', {userid:Number(id)})
 	
 	let { data: messages } = await supabase
 		.from('messages')
 		.select('id, created_at, message, user(userId, userName)')
 		.returns<Array<Message>>()
 		
-	console.log(messages)
+	// console.log(messages)
 
 	return {
-		userName:"",
+		userName,
 		id: Number(id),
 		messages:messages ?? [],
 	};
@@ -42,19 +41,12 @@ export const load: PageServerLoad = async ({ cookies }) => {
 export const actions = {
 	create: async ({ cookies, request }) => {
 		const data = await request.formData()
-		fetch(PRIVATE_URL_API + "createMessage/", {
-			method:"POST",
-			headers:{
-				'Accept': 'application/json',
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({
-				id: Number(cookies.get('userid')),
-				message: data.get('message'),
-			}),
-		})
+		// console.log("отправлено add_message")
+		await supabase.rpc('add_message', {userid: Number(cookies.get('userid')), message: String(data.get('message')) })
 	},
 	deleteAll: async () => {
-		fetch(PRIVATE_URL_API + "delteAllMessages/", {method:"POST"})
+		// console.log("отправлено delete_messages")
+		let { error } = await supabase.rpc('delete_all_messages')
+		if (error) console.log(error)
 	},
 };
