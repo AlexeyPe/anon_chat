@@ -1,5 +1,5 @@
 <script lang="ts">
-    export let author:string
+    export let author:string | null
     export let message:string
     export let date:Date
     export let right:boolean = true

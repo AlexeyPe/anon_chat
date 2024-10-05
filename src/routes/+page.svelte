@@ -8,20 +8,13 @@
 	import { Textarea } from "$lib/components/ui/textarea";
 	import { Label } from "$lib/components/ui/label";
 	import { Button } from "$lib/components/ui/button/index.js";
-	import { ScrollArea } from "$lib/components/ui/scroll-area/index.js";
   	import Message from "./Message.svelte";
 	import * as Tooltip from "$lib/components/ui/tooltip/index.js";
 
-	import { browser } from "$app/environment";
 	import { onMount } from 'svelte';
 	import { enhance } from '$app/forms';
-	import { io } from "socket.io-client";
-	import { PUBLIC_URL_API_WEBSOCKET } from '$env/static/public';
-	const socket = io(PUBLIC_URL_API_WEBSOCKET, {
-            "reconnectionAttempts": Number.POSITIVE_INFINITY, //avoid having user reconnect manually in order to prevent dead clients after a server restart
-            "timeout" : 10000, //before connect_error and connect_timeout are emitted.
-            "transports" : ["websocket"]
-        });
+	import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_KEY} from '$env/static/public';
+	import { createClient } from '@supabase/supabase-js'
 
 	$: ({messages} = data)
 
@@ -30,18 +23,40 @@
 	let currentMessage:string
 	let textError:string = ""
 	let messageCreating = false;
-	let scrollArea:Element
 	const textAreaKeyup = () => {
 		currentLength = currentMessage.length
 		textError = currentLength == maxLength ? "text-error" : ""
 	}
-	const scrollDown = (element:Element) => {
-		element.scrollTop = element.scrollHeight;
-	}
 	onMount(() => {
-		socket.on("updateMessages", new_messages => {
-			messages = [...new_messages]
-		})
+		const supabase = createClient(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_KEY)
+		const roomOne = supabase.channel('schema-db-changes')
+		const channelA = supabase
+			.channel('schema-db-changes')
+			.on('postgres_changes', {
+				event: '*',
+				schema: 'public',
+			}, async (payload) => {
+				if (payload.eventType == "INSERT") {
+					const {data: userNameData} = await supabase.from('users').select().eq("userId", payload.new.user)
+					let new_msg = {
+						created_at: payload.new.created_at,
+						id: payload.new.id,
+						message: payload.new.message,
+						user: {
+							userId: payload.new.user,
+							userName: userNameData![0].userName,
+						}
+					}
+					if (messages.find(element => element.id == new_msg.id)) {
+						console.log("find copy")
+					} else {
+						messages = [...messages, new_msg]
+						console.log("msg added:", messages)
+					}
+				} else if (payload.eventType == "DELETE") {
+					messages = []
+				}
+			}).subscribe()
 	})
 </script>
 
@@ -53,7 +68,7 @@
 <div class="h-full relative pb-4">
 	<div class="absolute h-full w-full flex flex-col">
 		<div class="relative h-full flex flex-col my-5">
-			<div bind:this={scrollArea} class="absolute bottom-0 overflow-y-auto flex p-3 flex-col max-h-full w-full ">
+			<div class="absolute bottom-0 overflow-y-auto flex p-3 flex-col max-h-full w-full ">
 				{#if messages != null}
 					{#each messages as msg, i}
 						{#if i != 0 && messages[i-1].user.userId == messages[i].user.userId}
@@ -113,7 +128,6 @@
 				return async ({ update }) => {
 					await update();
 					messageCreating = false;
-					scrollDown(scrollArea)
 				};
 			}}
 		>

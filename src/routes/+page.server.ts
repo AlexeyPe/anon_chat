@@ -1,7 +1,5 @@
-import { PRIVATE_URL_API } from '$env/static/private';
 import type { PageServerLoad } from './$types.js';
 import { supabase } from "$lib/supabaseClient";
-import { error } from 'console';
 
 export const load: PageServerLoad = async ({ cookies }) => {
 	let id = cookies.get('userid')
@@ -17,7 +15,7 @@ export const load: PageServerLoad = async ({ cookies }) => {
 		message: string
 		user: {
 			userId: number
-			userName: string
+			userName: string | null
 		}
 	}
 
