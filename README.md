@@ -1,38 +1,65 @@
-# create-svelte
+# Анонимный чат на SvelteKit
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/main/packages/create-svelte).
+[Demo](https://anon-chat-six.vercel.app/)
 
-## Creating a project
+Стек фронтенда: Svelte/SvelteKit, TailwindCSS, Supabase, shadcn, ts/typescript, js/javascript, REST API, Websocket API, HTML, CSS.
 
-If you're seeing this, you've probably already done this step. Congrats!
+Стек бэкенда: Supabase, PosgreSQL, SQL, plpgsql, database functions. 
 
-```bash
-# create a new project in the current directory
-npm create svelte@latest
+https://github.com/user-attachments/assets/448ce567-3389-4706-a354-9c2fcc3add45
 
-# create a new project in my-app
-npm create svelte@latest my-app
+*Время utc+0.
+
+# Высшие показатели сайта - lighthouse 
+![3jrZxFZhU4](https://github.com/user-attachments/assets/cfed0dea-1a75-4971-a058-6eb3d72991c6)
+
+# Supabase sql код
+### Функция `getUserName(userId)`, возвращает имя пользователя.
+```sql
+CREATE
+OR REPLACE FUNCTION getUserName (userId BIGINT) RETURNS TEXT AS $$
+DECLARE
+    userName text;
+    randomColor text;
+    randomAnimal text;
+BEGIN
+    -- Попытка получить имя пользователя
+    SELECT "userName" INTO userName FROM public.users WHERE "userId" = userId;
+
+    -- Если пользователь найден, вернуть его имя
+    IF userName IS NOT NULL THEN
+        RETURN userName;
+    END IF;
+
+    -- Генерация случайного цвета и животного для нового пользователя
+    randomColor := (ARRAY['красная', 'синяя', 'зелёная', 'белая', 'чёрная', 'оранжевая', 'золотая', 'голубая', 'жёлтая'])[FLOOR(RANDOM() * 9) + 1];
+    randomAnimal := (ARRAY['черепаха', 'обезьяна', 'собака', 'акула', 'рыба', 'панда', 'лама', 'змея', 'мышь'])[FLOOR(RANDOM() * 9) + 1];
+
+    -- Вставка нового пользователя в таблицу
+    INSERT INTO public.users ("userId", "userName") VALUES (userId, randomColor || ' ' || randomAnimal);
+
+    -- Вернуть имя нового пользователя
+    RETURN randomColor || ' ' || randomAnimal;
+END;
+$$ LANGUAGE plpgsql;
 ```
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+### Функция `add_message(userId, message)` добавлявет сообщение.
+```sql
+CREATE
+OR REPLACE FUNCTION add_message (userId BIGINT, message TEXT) RETURNS void AS $$
+BEGIN
+    INSERT INTO public.messages ("user", message) 
+    VALUES (userId, message);
+END;
+$$ LANGUAGE plpgsql;
 ```
-
-## Building
-
-To create a production version of your app:
-
-```bash
-npm run build
+### Функция `delete_all_messages()` удаляет все сообщения.
+```sql
+CREATE
+OR REPLACE FUNCTION delete_all_messages () RETURNS void AS $$
+BEGIN
+    DELETE FROM public.messages
+    WHERE id IS NOT NULL;  -- Условие, которое всегда истинно
+END;
+$$ LANGUAGE plpgsql;
 ```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
