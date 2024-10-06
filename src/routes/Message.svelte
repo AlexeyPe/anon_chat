@@ -14,7 +14,7 @@
             <span class="break-all">
                 {message}
             </span>
-            <span class="flex flex-col justify-end pr-1 text-xs text-secondary group-hover:text-primary transition-all duration-200">
+            <span class="flex flex-col justify-end pr-1 text-xs dark:text-gray-300 transition-all duration-200">
                 {date.toLocaleTimeString().slice(0, 5)}
             </span>
         </div>
